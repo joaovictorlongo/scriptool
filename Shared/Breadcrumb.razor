@@ -1,0 +1,48 @@
+@page "/breadcrumb"
+@using System.Collections.Generic
+
+<nav style="breadcrumb" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        @foreach (var item in Items)
+        {
+          if (item.Link == CurrentPage) {
+            <li class="@GetListElement(Items.IndexOf(item))" aria-current="page">@item.Text</li>
+            break;
+          }
+          <li class="@GetListElement(Items.IndexOf(item))"><a href="@item.Link">@item.Text</a></li>
+        }
+    </ol>
+</nav>
+
+@code {
+  [Parameter]
+  public string CurrentPage { get; set; } = "";
+  public class BreadcrumbItem {
+    public string Text { get; set; } = "";
+    public string Link { get; set; } = "";
+  }
+  private List<BreadcrumbItem> Items { get; set; } = new List<BreadcrumbItem>{
+    new BreadcrumbItem{Text="Home", Link="/"},
+    new BreadcrumbItem{Text="Csv para JSON", Link="/csv-to-json"},
+  };
+  private int currentPageIndex;
+
+  private string GetListElement(int index) {
+      if (index == currentPageIndex)
+      {
+          return "breadcrumb-item active";
+      }
+      else
+      {
+          return "breadcrumb-item";
+      }
+  }
+  protected override void OnInitialized() {
+    for (int i = 0; i < Items.Count; i++) {
+      if (Items[i].Link == CurrentPage) {
+        currentPageIndex = i;
+        break;
+      }
+    }
+  }
+}
